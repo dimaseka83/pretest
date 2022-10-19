@@ -1,31 +1,41 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-
 export default defineComponent({
-  name: 'Login',
-  setup() {
-    return {}
+  data() {
+    return {
+        heading: [
+            {
+                title: 'Heading 1',
+                class: 'text-9xl'
+            },
+            {
+                title: 'Heading 2',
+                class: 'text-6xl'
+            },
+            {
+                title: 'Heading 3',
+                class: 'text-4xl'
+            },
+            {
+                title: 'Heading 4',
+                class: 'text-2xl'
+            },
+            {
+                title: 'Heading 5',
+                class: 'text-xl'
+            },
+            {
+                title: 'Heading 6',
+                class: 'text-lg'
+            },
+        ]
+    }
   },
 })
-
 </script>
 <template>
-   <div class="flex justify-center h-screen w-screen items-center">
-    <div class="w-full md:w-1/2 flex flex-col items-center " >
-        <!-- text login -->
-        <h1 class="text-center text-2xl font-bold text-gray-600 mb-6">LOGIN</h1>
-        <!-- email input -->
-        <div class="w-3/4 mb-6">
-            <input type="email" name="email" id="email" class="w-full py-4 px-8 bg-slate-200 placeholder:font-semibold rounded hover:ring-1 outline-blue-500" placeholder="User Name">
-        </div>
-        <!-- password input -->
-        <div class="w-3/4 mb-6">
-            <input type="password" name="password" id="password" class="w-full py-4 px-8 bg-slate-200 placeholder:font-semibold rounded hover:ring-1 outline-blue-500 " placeholder="Password">
-        </div>
-        <!-- button -->
-        <div class="w-3/4 mt-4">
-            <button type="submit" class="py-4 bg-blue-400 w-full rounded text-blue-50 font-bold hover:bg-blue-700"> LOGIN</button>
-        </div>
+    <div>
+        <h1 class="text-3xl md:text-6xl lg:text-9xl font-bold underline text-blue-700 ">Hello World!</h1>
+        <h1 v-for="(head, idx) in heading" :key="idx" :class="head.class" class="text-red-800">{{ head.class }}</h1>
     </div>
-   </div>
 </template>
