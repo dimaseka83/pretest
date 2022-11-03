@@ -2,102 +2,119 @@
   import {
     defineComponent
   } from 'vue'
-
-  interface dummyChat {
-    search: string,
-      chat: Array < any >
-  }
-
+  import navigation from '../../components/navigation.vue'
+  import mixins from '../../mixins/mix'
   export default defineComponent({
-    name: 'Chat',
-    data(): dummyChat {
-      return {
-        search: '',
-        chat: [{
-          name: 'John Doe',
-          message: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.',
-          time: '12:00',
-          image: 'https://randomuser.me/api/?gender=female'
-        }, ]
-      }
+    components: {
+      navigation
     },
+    mixins: [mixins],
+    name: 'Chat',
     methods: {
       timeHuman(time: string) {
         const date = new Date()
         const hour = date.getHours()
         const minute = date.getMinutes()
-        const timeNow = `${hour}:${minute}`
+        const second = date.getSeconds()
+        const timeNow = `${hour}:${minute}:${second}`
         const timeChat = time.split(':')
         const timeNowSplit = timeNow.split(':')
         const timeChatHour = parseInt(timeChat[0])
         const timeChatMinute = parseInt(timeChat[1])
+        const timeChatSecond = parseInt(timeChat[2])
         const timeNowHour = parseInt(timeNowSplit[0])
         const timeNowMinute = parseInt(timeNowSplit[1])
+        const timeNowSecond = parseInt(timeNowSplit[2])
         if (timeChatHour === timeNowHour) {
-          return 'Just now'
-        } else if (timeChatHour === timeNowHour - 1) {
-          return `${timeNowMinute - timeChatMinute} menit yang lalu`
+          if (timeChatMinute === timeNowMinute) {
+            if (timeChatSecond === timeNowSecond) {
+              return 'Just now'
+            } else if (timeChatSecond < timeNowSecond) {
+              return `${timeNowSecond - timeChatSecond} second ago`
+            } else {
+              return `${timeChatSecond - timeNowSecond} second later`
+            }
+          } else if (timeChatMinute < timeNowMinute) {
+            return `${timeNowMinute - timeChatMinute} minute ago`
+          } else {
+            return `${timeChatMinute - timeNowMinute} minute later`
+          }
         } else if (timeChatHour < timeNowHour) {
-          return `${timeNowHour - timeChatHour} jam yang lalu`
+          return `${timeNowHour - timeChatHour} hour ago`
         } else {
-          return time
+          return `${timeChatHour - timeNowHour} hour later`
         }
+      },
+      getLastMessage(message: Array < any > ) {
+        return message[message.length - 1].text
+      },
+      getLastMessageTime(message: Array < any > ) {
+        return this.timeHuman(message[message.length - 1].time)
+      },
+      getIsNewMessageTrue(message: Array < any > ) {
+        let count = 0
+        message.forEach((item: any) => {
+          if (item.isNew) {
+            count++
+          }
+        })
+        return count
+      },
+      detailChat(id: number) {
+        this.$router.push({
+          name: 'ChatDetail',
+          params: {
+            id
+          }
+        })
       }
     },
     computed: {
       searchChat() {
-        return this.chat.filter((item: any) => {
-          return item.name.toLowerCase().includes(this.search.toLowerCase())
-        })
+        if(this.$store.state.search !== ''){
+          if(this.chats.find((chat: any) => chat.name.toLowerCase().includes(this.$store.state.search.toLowerCase()))){
+            return this.chats.filter((chat: any) => chat.name.toLowerCase().includes(this.$store.state.search.toLowerCase()))
+          }else{
+            return []
+          }
+        }
+        return this.chats
       }
     }
   })
 </script>
 <template>
   <div>
-    <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900">
-  <div class="container flex flex-wrap justify-between items-center mx-auto">
-  <a href="https://flowbite.com/" class="flex items-center">
-      <img src="https://flowbite.com/docs/images/logo.svg" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
-      <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
-  </a>
-  <div class="flex md:order-2">
-    <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search" aria-expanded="false" class="md:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 mr-1" >
-      <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
-      <span class="sr-only">Search</span>
-    </button>
-    <div class="hidden relative md:block">
-      <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-        <svg class="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
-        <span class="sr-only">Search icon</span>
+    <navigation></navigation>
+      <div class="p-4 bg-white border shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+        <div v-if="searchChat.length > 0">
+          <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700" v-for="(chat, key) in searchChat" :key="key">
+            <li class="py-3 sm:py-4" @click="detailChat(chat.id)">
+              <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0">
+                  <img class="w-8 h-8 rounded-full" :src="chat.image"
+                    alt="Neil image">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                    {{ chat.name }}
+                  </p>
+                  <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                    {{ getLastMessage(chat.message) }}
+                  </p>
+                </div>
+                <div class="flex-2 items-center text-base font-semibold text-gray-900 dark:text-white">
+                  <span class="bg-blue-100 w-5 h-5 mb-1 text-blue-800 text-sm font-semibold inline-flex items-center p-1.5 rounded-full dark:bg-blue-200 dark:text-blue-800">
+                    {{ getIsNewMessageTrue(chat.message) }}
+                    <span class="sr-only">Icon description</span>
+                  </span>
+                  <p class="text-sm font-medium text-gray-900 truncate dark:text-white">{{ getLastMessageTime(chat.message) }}</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+          </div>
+          <p v-else class="text-sm text-center font-medium text-gray-900 truncate dark:text-white">No results found</p>
       </div>
-      <input type="text" id="search-navbar" class="block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search...">
     </div>
-    <button data-collapse-toggle="navbar-search" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-search" aria-expanded="false">
-      <span class="sr-only">Open menu</span>
-      <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
-    </button>
-  </div>
-    <div class="hidden justify-between items-center w-full md:flex md:w-auto md:order-1" id="navbar-search">
-      <div class="relative mt-3 md:hidden">
-        <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-          <svg class="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
-        </div>
-        <input type="text" id="search-navbar" class="block p-2 pl-10 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search...">
-      </div>
-      <ul class="flex flex-col p-4 mt-4 bg-gray-50 rounded-lg border border-gray-100 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-        <li>
-          <a href="#" class="block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white" aria-current="page">Home</a>
-        </li>
-        <li>
-          <a href="#" class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About</a>
-        </li>
-        <li>
-          <a href="#" class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Services</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-  </div>
 </template>
