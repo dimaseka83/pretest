@@ -84,7 +84,7 @@
   })
 </script>
 <template>
-  <div>
+  <div class="h-screen dark:bg-gray-600">
     <navigation></navigation>
       <div class="p-4 bg-white border shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700">
         <div v-if="searchChat.length > 0">

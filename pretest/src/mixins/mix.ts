@@ -27,7 +27,8 @@ const mixins = {
                 time: '11:11:00',
                 isMe: true,
                 isNew: true
-              }],
+              },
+            ],
               image: 'https://randomuser.me/api/portraits/men/75.jpg'
             }, ]
           }
