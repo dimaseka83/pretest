@@ -11,40 +11,6 @@
     mixins: [mixins],
     name: 'Chat',
     methods: {
-      timeHuman(time: string) {
-        const date = new Date()
-        const hour = date.getHours()
-        const minute = date.getMinutes()
-        const second = date.getSeconds()
-        const timeNow = `${hour}:${minute}:${second}`
-        const timeChat = time.split(':')
-        const timeNowSplit = timeNow.split(':')
-        const timeChatHour = parseInt(timeChat[0])
-        const timeChatMinute = parseInt(timeChat[1])
-        const timeChatSecond = parseInt(timeChat[2])
-        const timeNowHour = parseInt(timeNowSplit[0])
-        const timeNowMinute = parseInt(timeNowSplit[1])
-        const timeNowSecond = parseInt(timeNowSplit[2])
-        if (timeChatHour === timeNowHour) {
-          if (timeChatMinute === timeNowMinute) {
-            if (timeChatSecond === timeNowSecond) {
-              return 'Just now'
-            } else if (timeChatSecond < timeNowSecond) {
-              return `${timeNowSecond - timeChatSecond} second ago`
-            } else {
-              return `${timeChatSecond - timeNowSecond} second later`
-            }
-          } else if (timeChatMinute < timeNowMinute) {
-            return `${timeNowMinute - timeChatMinute} minute ago`
-          } else {
-            return `${timeChatMinute - timeNowMinute} minute later`
-          }
-        } else if (timeChatHour < timeNowHour) {
-          return `${timeNowHour - timeChatHour} hour ago`
-        } else {
-          return `${timeChatHour - timeNowHour} hour later`
-        }
-      },
       getLastMessage(message: Array < any > ) {
         return message[message.length - 1].text
       },

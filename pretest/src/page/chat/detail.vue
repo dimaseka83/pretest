@@ -25,7 +25,7 @@ export default defineComponent({
          if (this.message !== '') {
          this.detail.message.push({
             text: this.message,
-            time: `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`,
+            time: `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`,
             isNew: true,
             isMe: true,
          })
@@ -59,17 +59,21 @@ export default defineComponent({
    v-for="(chat, idx) in detail.message" :key="idx">
       <div class="chat-message" v-if="chat.isMe == true">
          <div class="flex items-end justify-end">
-            <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-               <div><span class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">{{ chat.text }}</span></div>
+            <div class="flex flex-col space-y-2 max-w-sm mx-2 order-1 items-end">
+               <div><span class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">{{ chat.text }} 
+                  <span class="text-xs p-15">{{ getTimeOnly(chat.time) }}</span>
+                  </span></div>
             </div>
-            <img src="https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144" alt="My profile" class="w-6 h-6 rounded-full order-2">
+            <img src="https://i.pravatar.cc/300" alt="My profile" class="w-6 h-6 rounded-full order-2">
          </div>
       </div>
       <div class="chat-message" v-else>
          <div class="flex items-end">
-            <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+            <div class="flex flex-col space-y-2 text-sm max-w-sm mx-2 order-2 items-start">
                <div>
-                  <span class="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">{{ chat.text }}</span>
+                  <span class="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">{{ chat.text }}
+                     <span class="text-xs p-15">{{ getTimeOnly(chat.time) }}</span>
+                  </span>
                </div>
             </div>
             <img :src="detail.image" alt="My profile" class="w-6 h-6 rounded-full order-1">
