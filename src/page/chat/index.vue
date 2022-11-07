@@ -1,17 +1,16 @@
 <script lang="ts">
-  import {
-    defineComponent
-  } from 'vue'
-  import navigation from '../../components/navigation.vue'
-  import mixins from '../../mixins/mix'
-  export default defineComponent({
-    components: {
-      navigation
-    },
-    mixins: [mixins],
-    name: 'Chat',
-    methods: {
-      getLastMessage(message: Array < any > ) {
+    import navigation from '../../components/navigation.vue'
+    import mixins from '../../mixins/mix'
+    import {
+      defineComponent
+    } from 'vue'
+
+    export default defineComponent({
+      components: {
+        navigation
+      },
+      methods: {
+        getLastMessage(message: Array < any > ) {
         return message[message.length - 1].text
       },
       getLastMessageTime(message: Array < any > ) {
@@ -34,20 +33,27 @@
           }
         })
       }
-    },
-    computed: {
-      searchChat() {
-        if(this.$store.state.search !== ''){
-          if(this.chats.find((chat: any) => chat.name.toLowerCase().includes(this.$store.state.search.toLowerCase()))){
-            return this.chats.filter((chat: any) => chat.name.toLowerCase().includes(this.$store.state.search.toLowerCase()))
+      },
+      mixins: [mixins],
+      computed: {
+        searchChat() {
+        if(this.store.search !== ''){
+          if(this.chats.find((chat: any) => chat.name.toLowerCase().includes(this.store.search.toLowerCase()))){
+            return this.chats.filter((chat: any) => chat.name.toLowerCase().includes(this.store.search.toLowerCase()))
           }else{
             return []
           }
         }
         return this.chats
       }
-    }
-  })
+      }
+    })
+
+</script>
+
+<script lang="ts" setup>
+import { useStore } from '../../store'
+  const store = useStore()
 </script>
 <template>
   <div class="h-screen dark:bg-gray-600">

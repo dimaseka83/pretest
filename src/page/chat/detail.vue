@@ -70,7 +70,7 @@ export default defineComponent({
       <div class="chat-message" v-else>
          <div class="flex items-end">
             <div class="flex flex-col space-y-2 text-sm max-w-sm mx-2 order-2 items-start">
-               <div>
+               <div  >
                   <span class="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">{{ chat.text }}
                      <span class="text-xs p-15">{{ getTimeOnly(chat.time) }}</span>
                   </span>

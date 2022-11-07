@@ -16,7 +16,7 @@
 
   export default defineComponent({
     name: 'Login',
-    data() {
+    setup() {
       return {
         email: '',
         password: '',

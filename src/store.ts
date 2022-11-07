@@ -1,14 +1,11 @@
-import { createStore, Store } from "vuex"
-import { InjectionKey } from "vue"
+import { defineStore } from 'pinia'
 
-export interface State {
+interface State {
     search: string
 }
-
-export const key: InjectionKey<Store<State>> = Symbol()
-
-export const store = createStore<State>({
-    state: {
-        search: ""
-    },
+export const useStore = defineStore({
+    id: 'store',
+    state: (): State => ({
+        search: ''
+    }),
 })
